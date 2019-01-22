@@ -15,6 +15,7 @@
 # include <algorithm>
 
 # include "opencv2/opencv.hpp"
+# include "opencv2/optflow.hpp"
 
 # include "error_handling.h"
 # include "hog_cell_rectangles.h"
@@ -49,7 +50,7 @@ void ImageToHogCalculator::CalcHog(const cv::Mat &image,
   ok_gradients_ = cv::Mat::zeros(image.size(), CV_8UC1);
 
   // calculate the 360 degree gradient
-  cv::calcMotionGradient(gray_image_, // input grayscale iamge
+  cv::motempl::calcMotionGradient(gray_image_, // input grayscale iamge
                          ok_gradients_, // output mask of gradients
                          deg_matrix_, // output matrix of degree info
                          1, // ignore very very small magnitudes
