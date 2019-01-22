@@ -252,7 +252,8 @@ root_.reset(new Root("", "", "hand_renderer.log"));
     root_->loadPlugin("/usr/local/opt/ogre/lib/libPlugin_OctreeSceneManager");
   #else
     root_->loadPlugin("Plugin_OctreeSceneManager");
-#endif#endif
+  #endif
+#endif
 
   RenderSystemList render_systems = root_->getAvailableRenderers();
   if (!render_systems.size()) {
