@@ -18,6 +18,9 @@ ENDIF()
 
 INCLUDE_DIRECTORIES(${LibHand_INCLUDE_DIRS})
 
+ADD_EXECUTABLE(generate_poses generate_poses.cc)
+TARGET_LINK_LIBRARIES(generate_poses ${LibHand_LIBRARIES} ${OpenCV_LIBS})
+
 ADD_EXECUTABLE(bend_one_finger bend_one_finger.cc)
 TARGET_LINK_LIBRARIES(bend_one_finger ${LibHand_LIBRARIES} ${OpenCV_LIBS})
 
