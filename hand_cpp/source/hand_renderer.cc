@@ -233,26 +233,15 @@ root_.reset(new Root("", "", "hand_renderer.log"));
   root_->installPlugin(gl_plugin_.get());
   root_->installPlugin(octree_plugin_.get());
 #else
-  #ifdef __APPLE__
-    root_->loadPlugin("/usr/local/opt/ogre/lib/libPlugin_OctreeZone");
-    root_->loadPlugin("/usr/local/opt/ogre/lib/libPlugin_PCZSceneManager");
-  #else
-    root_->loadPlugin("Plugin_OctreeZone");
-    root_->loadPlugin("Plugin_PCZSceneManager");
-  #endif
+  root_->loadPlugin("Plugin_OctreeZone");
+  root_->loadPlugin("Plugin_PCZSceneManager");
   #ifdef WIN32
     //FIXME: Windows build currently only supports Release build (Debug needs _d appended to the strings) 
     root_->loadPlugin("RenderSystem_Direct3D9");
-  #elif __APPLE__
-    root_->loadPlugin("/usr/local/opt/ogre/lib/libRenderSystem_GL");
   #else
     root_->loadPlugin("RenderSystem_GL");
   #endif
-  #ifdef __APPLE__
-    root_->loadPlugin("/usr/local/opt/ogre/lib/libPlugin_OctreeSceneManager");
-  #else
-    root_->loadPlugin("Plugin_OctreeSceneManager");
-  #endif
+  root_->loadPlugin("Plugin_OctreeSceneManager");
 #endif
 
   RenderSystemList render_systems = root_->getAvailableRenderers();
@@ -275,6 +264,8 @@ root_.reset(new Root("", "", "hand_renderer.log"));
 
   NameValuePairList window_params;
   window_params["macAPI"] = "cocoa";
+  window_params["minColourBufferSize"] = Ogre::StringConverter::toString(32);
+  window_params["colourDepth"] = Ogre::StringConverter::toString(32);
 
   RenderWindow *window = root_->createRenderWindow("HandRenderer Window",
                                                    1, 1,
@@ -288,7 +279,7 @@ root_.reset(new Root("", "", "hand_renderer.log"));
 }
 
 void HandRendererPrivate::SetRenderSizeInternal(int width, int height) {
-  pixel_data_.reset(new char[3 * width * height]);
+  pixel_data_.reset(new char[4 * width * height]);
 
   output_texture_ =
     TextureManager::getSingleton().createManual(render_tex_name_,
@@ -296,7 +287,7 @@ void HandRendererPrivate::SetRenderSizeInternal(int width, int height) {
                                                 TEX_TYPE_2D,
                                                 width, height,
                                                 0,
-                                                PF_B8G8R8,
+                                                PF_A8B8G8R8,
                                                 TU_RENDERTARGET,
                                                 0, false, false);
 
@@ -391,7 +382,7 @@ void HandRendererPrivate::LoadScene(const SceneSpec &scene_spec) {
     hand_skeleton_ = hand_entity_->getSkeleton();
 
     viewport_ = render_target_->addViewport(camera_);
-    viewport_->setBackgroundColour(ColourValue(0, 0, 0));
+    viewport_->setBackgroundColour(ColourValue(0, 0, 0, 0));
 
     for (int i = 0; i < scene_spec.num_bones(); ++i) {
       const string &bone_name = scene_spec.bone_name(i);
@@ -483,13 +474,13 @@ void HandRendererPrivate::RenderHand() {
 
   root_->renderOneFrame(0);
   PixelBox pixel_box(Box(0, 0, render_width_, render_height_),
-                     PF_R8G8B8,
+                     PF_A8R8G8B8,
                      pixel_data_.get());
   render_target_->copyContentsToMemory(pixel_box, RenderTarget::FB_FRONT);
 }
 
 const cv::Mat HandRendererPrivate::pixel_buffer_cv() const {
-  return cv::Mat(render_height_, render_width_, CV_8UC3, pixel_data_.get());
+  return cv::Mat(render_height_, render_width_, CV_8UC4, pixel_data_.get());
 }
 
 Vector3 HandRendererPrivate::CamPositionRelativeToHand() {
