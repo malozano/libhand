@@ -1,0 +1,2 @@
+/usr/bin/ar qc libdot_sceneloader.a  CMakeFiles/dot_sceneloader.dir/dot_sceneloader.cc.o
+/usr/bin/ranlib libdot_sceneloader.a

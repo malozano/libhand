@@ -50,8 +50,8 @@ int main(int argc, char **argv) {
     // Tell the renderer to load the scene
     hand_renderer.LoadScene(scene_spec);
 
-    // Configure camera
-    HandCameraSpec camera(20, libhand_to_radians(440), libhand_to_radians(400), libhand_to_radians(500));
+    // Configure camera (r - distance, theta - pitch, phi - yaw, tilt)
+    HandCameraSpec camera(10, libhand_to_radians(440), libhand_to_radians(400), libhand_to_radians(500));
     hand_renderer.set_camera_spec(camera);
 
     // Now we render a hand using a default pose
