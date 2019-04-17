@@ -1,9 +1,0 @@
-/home/mvrlab/Documentos/libhand/dist/libhand_hog.so
-/home/mvrlab/Documentos/libhand/dist/libhand_renderer.so
-/home/mvrlab/Documentos/libhand/dist/libhand_utils.so
-/home/mvrlab/Documentos/libhand/dist/LibHand-export.cmake
-/home/mvrlab/Documentos/libhand/dist/LibHand-export-noconfig.cmake
-/home/mvrlab/Documentos/libhand/dist/LibHandConfig.cmake
-/home/mvrlab/Documentos/libhand/dist/FindLibHand.cmake
-/home/mvrlab/Documentos/libhand/dist/libdot_sceneloader.a
-/home/mvrlab/Documentos/libhand/dist/libtinyxml.a

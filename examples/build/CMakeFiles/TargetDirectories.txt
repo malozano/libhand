@@ -1,7 +1,0 @@
-/home/mvrlab/Documentos/libhand/examples/build/CMakeFiles/rebuild_cache.dir
-/home/mvrlab/Documentos/libhand/examples/build/CMakeFiles/bend_one_finger.dir
-/home/mvrlab/Documentos/libhand/examples/build/CMakeFiles/edit_cache.dir
-/home/mvrlab/Documentos/libhand/examples/build/CMakeFiles/generate_poses.dir
-/home/mvrlab/Documentos/libhand/examples/build/CMakeFiles/ogre_rendering_test.dir
-/home/mvrlab/Documentos/libhand/examples/build/CMakeFiles/render_hog_descriptor.dir
-/home/mvrlab/Documentos/libhand/examples/build/CMakeFiles/file_dialog_test.dir
