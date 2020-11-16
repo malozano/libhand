@@ -29,6 +29,9 @@
 # include "hand_pose.h"
 # include "scene_spec.h"
 
+# include "OGRE/OgreVector2.h"
+
+
 namespace libhand {
 
 using namespace std;
@@ -74,6 +77,10 @@ class HAND_EXPORT HandRenderer {
 
   // Renders the hand into the pixel buffer.
   void RenderHand();
+
+  // Obtains bone positions
+  cv::Rect GetBonePosition(int bone_no);
+  cv::Rect GetHandBoundingBox();
 
   // The camera distance from the center of the hand object when the
   // scene file was loaded

@@ -7,7 +7,7 @@
 
 // We will use OpenCV, so include the standard OpenCV header
 # include "opencv2/opencv.hpp"
-
+# include "image_utils.h"
 // This is our little library for showing file dialogs
 # include "file_dialog.h"
 
@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
     // Setup the hand renderer
     HandRenderer hand_renderer;
     hand_renderer.Setup();
-    hand_renderer.SetRenderSize(224,224);
+    hand_renderer.SetRenderSize(1024,1024);
 
     // Process the scene spec file
     string file_name = "../../hand_model/scene_spec.yml"; //dialog.Open();
@@ -56,10 +56,12 @@ int main(int argc, char **argv) {
 
     // Now we render a hand using a default pose
     hand_renderer.RenderHand();
+    cv::Rect rect1 = hand_renderer.GetBonePosition(11);
 
     // We can get an OpenCV matrix from the rendered hand image
     cv::Mat pic = hand_renderer.pixel_buffer_cv();
-
+    cv::rectangle(pic, rect1, cv::Scalar(255, 0, 0, 255));
+      
     // And tell OpenCV to show the rendered hand
     cv::imwrite("prueba1.png",pic);
 
@@ -69,11 +71,16 @@ int main(int argc, char **argv) {
     FullHandPose hand_pose(scene_spec.num_bones());
 
     // We will bend the first joint, joint 0, by PI/2 radians (90 degrees)
-    hand_pose.bend(0) += 3.14159 / 2;
+    hand_pose.bend(9) += 3.14159 / 2;
+    hand_pose.bend(17) += 3.14159 / 4;
     hand_renderer.SetHandPose(hand_pose);
-
+      
     // Then we will render the hand again and show it to the user.
     hand_renderer.RenderHand();
+    cv::Mat image_mask = ImageUtils::MaskFromNonZero(pic);
+    cv::Rect rect2 = ImageUtils::FindBoundingBox(image_mask);
+    cv::rectangle(pic, rect2, cv::Scalar(255, 0, 0, 255));
+      
     cv::imwrite("prueba2.png",pic);
   } catch (const std::exception &e) {
     cerr << "Exception: " << e.what() << endl;

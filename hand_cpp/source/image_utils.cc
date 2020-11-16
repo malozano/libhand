@@ -27,7 +27,7 @@ cv::Mat ImageUtils::Grayscale8Bit(const cv::Mat &image_in, bool clone) {
 
   cv::Mat gray_image;
 
-  cv::cvtColor(image_in, gray_image, CV_BGR2GRAY);
+  cv::cvtColor(image_in, gray_image, cv::COLOR_BGR2GRAY);
   return gray_image;
 }
 
@@ -60,7 +60,7 @@ Contours ImageUtils::FindContours(const cv::Mat &image) {
   cv::Mat gray_image = Grayscale8BitClone(image);
 
   cv::findContours(gray_image, contours,
-                   CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+                   cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
   return contours;
 }

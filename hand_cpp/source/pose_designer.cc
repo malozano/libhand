@@ -63,8 +63,8 @@ void PoseDesigner::Setup(int argc, char **argv) {
 
   hand_pose_.reset(new FullHandPose(scene_spec_.num_bones()));
 
-  cv::namedWindow(win_render_, CV_WINDOW_AUTOSIZE);
-  cvMoveWindow(win_render_.c_str(), kGUILeftX, kGUITopY);
+  cv::namedWindow(win_render_, cv::WINDOW_AUTOSIZE);
+  cv::moveWindow(win_render_.c_str(), kGUILeftX, kGUITopY);
 
   sl_bend_.reset(MakeAngleSlider("bend", win_render_));
   sl_side_.reset(MakeAngleSlider("side", win_render_));
@@ -75,8 +75,8 @@ void PoseDesigner::Setup(int argc, char **argv) {
                                       hand_pose_->num_joints() - 1,
                                       &update_slider_fn_));
 
-  cv::namedWindow(win_camera_, CV_WINDOW_AUTOSIZE);
-  cvMoveWindow(win_camera_.c_str(),
+  cv::namedWindow(win_camera_, cv::WINDOW_AUTOSIZE);
+  cv::moveWindow(win_camera_.c_str(),
                kGUILeftX + kRenderWinWidth + kGUIXSpace,
                kGUITopY);
 
@@ -300,7 +300,7 @@ void PoseDesigner::DisplayHelp() {
   cv::Point rect_ul(center_x - rect_w / 2, center_y - rect_h / 2);
   cv::Point rect_br(center_x + rect_w / 2, center_y + rect_h / 2);
 
-  cv::rectangle(display_, rect_ul, rect_br, cv::Scalar(40, 0, 0), CV_FILLED);
+  cv::rectangle(display_, rect_ul, rect_br, cv::Scalar(40, 0, 0), cv::FILLED);
 
   TextPrinter printer_(display_, rect_ul.x + 10, rect_ul.y + 10);
 
@@ -341,7 +341,7 @@ void PoseDesigner::DisplayWarning(const string &line1, const string &line2) {
   cv::Point rect_ul(center_x - rect_w / 2, center_y - rect_h / 2);
   cv::Point rect_br(center_x + rect_w / 2, center_y + rect_h / 2);
 
-  cv::rectangle(display_, rect_ul, rect_br, cv::Scalar(0, 0, 80), CV_FILLED);
+  cv::rectangle(display_, rect_ul, rect_br, cv::Scalar(0, 0, 80), cv::FILLED);
 
   TextPrinter printer_(display_, rect_ul.x + 10, rect_ul.y + 15);
 
@@ -396,12 +396,12 @@ void PoseDesigner::DrawCameraSketch() {
   float x_2d = cx + (s_x * scale_f);
 
   cv::rectangle(cam_sketch_, cv::Point(0, 0), cv::Point(sw, sh),
-                cv::Scalar(40, 0, 0), CV_FILLED);
+                cv::Scalar(40, 0, 0), cv::FILLED);
   
   cv::rectangle(cam_sketch_,
                 cv::Point(x_2d - 3 * scale_f, y_2d - 3 * scale_f),
                 cv::Point(x_2d + 3 * scale_f, y_2d + 3 * scale_f),
-                cv::Scalar(0, 0, 200), CV_FILLED);
+                cv::Scalar(0, 0, 200), cv::FILLED);
 }
 
 void PoseDesigner::LoadPose() {

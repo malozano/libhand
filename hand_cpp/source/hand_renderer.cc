@@ -22,7 +22,9 @@
 # include <boost/shared_array.hpp>
 
 # include "OGRE/OgreQuaternion.h"
+# include "OGRE/OgreVector2.h"
 # include "OGRE/OgreVector3.h"
+# include "OGRE/OgreSphere.h"
 # include "OGRE/OgreMatrix3.h"
 
 # include "OGRE/OgreRoot.h"
@@ -76,6 +78,8 @@ class HandRendererPrivate {
   void SetHandPose(const FullHandPose &hand_pose, bool update_camera);
 
   void RenderHand();
+    cv::Rect GetBonePosition(int bone_no, float area_factor=0.2f, float dir_offset=0.5f);
+  cv::Rect GetHandBoundingBox();
 
   int render_width() { return render_width_; }
   int render_height() { return render_height_; }
@@ -166,6 +170,10 @@ void HandRenderer::SetHandPose(const FullHandPose &hand_pose,
   private_->SetHandPose(hand_pose, update_camera);
 }
 void HandRenderer::RenderHand() { private_->RenderHand(); }
+
+cv::Rect HandRenderer::GetBonePosition(int bone_no) { return private_->GetBonePosition(bone_no); }
+
+cv::Rect HandRenderer::GetHandBoundingBox() { return private_->GetHandBoundingBox(); }
 
 float HandRenderer::initial_cam_distance() const {
   return private_->initial_cam_distance();
@@ -503,6 +511,76 @@ Vector3 HandRendererPrivate::CamPositionRelativeToHand() {
 
 float HandRendererPrivate::CameraHandDistance() {
   return CamPositionRelativeToHand().length();
+}
+
+cv::Rect HandRendererPrivate::GetBonePosition(int bone_no, float area_factor, float dir_offset) {
+    Vector3 globalPos = hand_node_->_getDerivedPosition();
+            
+    Vector3 bone_pos = bone_by_index_[bone_no]->_getDerivedPosition() + globalPos;
+    Vector3 bone_dir = bone_by_index_[bone_no]->_getDerivedOrientation() * Vector3::UNIT_Y * dir_offset;
+
+    Vector3 up = camera_->getDerivedUp() * area_factor;
+    Vector3 right = camera_->getDerivedRight() * area_factor;
+    Vector3 bone_pos_min = bone_pos + bone_dir - up - right;
+    Vector3 bone_pos_max = bone_pos + bone_dir + up + right;
+    
+    
+    Vector3 projected_pos_min = camera_->getProjectionMatrix() * (camera_->getViewMatrix() * bone_pos_min);
+    Vector3 projected_pos_max = camera_->getProjectionMatrix() * (camera_->getViewMatrix() * bone_pos_max);
+    
+    float x_min = ((projected_pos_min.x / 2.f) + 0.5f) * render_width_;
+    float y_min = ((-projected_pos_min.y / 2.f) + 0.5f) * render_height_;
+    float x_max = ((projected_pos_max.x / 2.f) + 0.5f) * render_width_;
+    float y_max = ((-projected_pos_max.y / 2.f) + 0.5f) * render_height_;
+
+    cv::Rect rect = cv::Rect(min(x_min, x_max), min(y_min, y_max), abs(x_max-x_min), abs(y_max-y_min));
+    
+    return rect;
+}
+
+cv::Rect HandRendererPrivate::GetHandBoundingBox() {
+    
+    Sphere sphere = hand_entity_->getWorldBoundingSphere();
+            
+    Vector3 up = camera_->getDerivedUp();
+    Vector3 right = camera_->getDerivedRight();
+    Vector3 hand_pos_min = sphere.getCenter() - sphere.getRadius() * (up + right);
+    Vector3 hand_pos_max = sphere.getCenter() + sphere.getRadius() * (up + right);
+    
+    Vector3 projected_pos_min = camera_->getProjectionMatrix() * (camera_->getViewMatrix() * hand_pos_min);
+    Vector3 projected_pos_max = camera_->getProjectionMatrix() * (camera_->getViewMatrix() * hand_pos_max);
+    
+    float x_min = ((projected_pos_min.x / 2.f) + 0.5f) * render_width_;
+    float y_min = ((-projected_pos_min.y / 2.f) + 0.5f) * render_height_;
+    float x_max = ((projected_pos_max.x / 2.f) + 0.5f) * render_width_;
+    float y_max = ((-projected_pos_max.y / 2.f) + 0.5f) * render_height_;
+    
+    /*
+    AxisAlignedBox aabb = hand_entity_->getWorldBoundingBox();
+       
+    float x_min = FLT_MAX;
+    float y_min = FLT_MAX;
+    float x_max = -FLT_MAX;
+    float y_max = -FLT_MAX;
+
+    for(int corner=0; corner<8; corner++) {
+        Vector3 corner_pos = aabb.getCorner((AxisAlignedBox::CornerEnum
+)corner);
+        Vector3 projected_corner_pos = camera_->getProjectionMatrix() * (camera_->getViewMatrix() * corner_pos);
+
+        float x = ((projected_corner_pos.x / 2.f) + 0.5f) * render_width_;
+        float y = ((-projected_corner_pos.y / 2.f) + 0.5f) * render_height_;
+
+        if(x < x_min) x_min = x;
+        if(x > x_max) x_max = x;
+        if(y < y_min) y_min = y;
+        if(y > y_max) y_max = y;
+    }
+    */
+     
+    cv::Rect rect = cv::Rect(min(x_min, x_max), min(y_min, y_max), abs(x_max-x_min), abs(y_max-y_min));
+    
+    return rect;
 }
 
 }  // namespace libhand
